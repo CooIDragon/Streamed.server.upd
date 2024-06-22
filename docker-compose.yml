@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: StreamEd
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Volume для сохранения данных
+
+  ktor:
+    image: my-ktor-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./env.env
+    depends_on:
+      - postgres  # Ensure PostgreSQL starts before the Ktor app
+
+  nginx:
+    image: tiangolo/nginx-rtmp:latest
+    ports:
+      - "1935:1935"
+    depends_on:
+      - ktor
+
+volumes:
+  postgres_data:
