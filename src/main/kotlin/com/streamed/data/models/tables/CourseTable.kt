@@ -1,5 +1,6 @@
 package com.streamed.data.models.tables
 
+import com.streamed.data.models.tables.WebinarTable.references
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Column
 

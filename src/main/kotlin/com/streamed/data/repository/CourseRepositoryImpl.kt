@@ -1,7 +1,10 @@
 package com.streamed.data.repository
 
 import com.streamed.data.models.CourseModel
+import com.streamed.data.models.tables.CommentsTable
 import com.streamed.data.models.tables.CourseTable
+import com.streamed.data.models.tables.UsersCourseTable
+import com.streamed.data.models.tables.WebinarTable
 import com.streamed.domain.repository.CourseRepository
 import com.streamed.plugins.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
@@ -57,6 +60,16 @@ class CourseRepositoryImpl: CourseRepository {
 
     override suspend fun deleteCourse(courseId: Int, ownerId: Int) {
         dbQuery {
+            UsersCourseTable.deleteWhere { UsersCourseTable.courseId.eq(courseId) }
+
+            WebinarTable
+                .select { WebinarTable.courseId.eq(courseId) }
+                .forEach { webinar ->
+                    CommentsTable.deleteWhere { CommentsTable.webinarId eq webinar[WebinarTable.id] }
+                }
+
+            WebinarTable.deleteWhere { WebinarTable.courseId.eq(courseId) }
+
             CourseTable.deleteWhere { CourseTable.id.eq(courseId) and CourseTable.ownerId.eq(ownerId) }
         }
     }

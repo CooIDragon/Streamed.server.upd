@@ -13,4 +13,8 @@ class UsersCourseUseCase(
     suspend fun getAllSubCourses(userID: Int): List<Int> {
         return usersCourseRepository.getAllSubCourses(userID)
     }
+
+    suspend fun unsubscribeUser(userId: Int, courseId: Int) {
+        usersCourseRepository.unsubscribeUser(userId, courseId)
+    }
 }
