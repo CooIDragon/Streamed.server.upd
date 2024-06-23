@@ -43,7 +43,7 @@ fun Route.SubscribeRoute(usersCourseUseCase: UsersCourseUseCase) {
         }
 
         delete("api/v1/unsubscribe-user") {
-            val subscribeRequest = call.receiveNullable<AddSubscribe>() ?: kotlin.run {
+            val unsubRequest = call.request.queryParameters[Constants.Value.ID]?.toInt() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest, BaseResponse(false, Constants.Error.MISSING_FIELDS))
                 return@delete
             }
@@ -51,7 +51,7 @@ fun Route.SubscribeRoute(usersCourseUseCase: UsersCourseUseCase) {
             try {
                 if (call.principal<UserModel>()!!.role == Roles.STUDENT) {
                     val userId = call.principal<UserModel>()!!.id
-                    usersCourseUseCase.unsubscribeUser(userId, subscribeRequest.courseId)
+                    usersCourseUseCase.unsubscribeUser(userId, unsubRequest)
                     call.respond(HttpStatusCode.OK, BaseResponse(true, Constants.Success.DELETED_SUCCESSFULLY))
                 } else {
                     call.respond(HttpStatusCode.Conflict, BaseResponse(false, Constants.Error.ACCESS_RESTRICTED))
