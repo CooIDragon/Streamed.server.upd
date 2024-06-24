@@ -131,7 +131,7 @@ fun Route.WebinarRoute(webinarUseCase: WebinarUseCase) {
     get("/video/{fileName}") {
         val fileName = call.parameters["fileName"]
         if (fileName != null) {
-            val file = File("/nginx/media/$fileName")
+            val file = File("/media/$fileName")
             if (file.exists() && file.isFile) {
                 val inputStream = FileInputStream(file)
                 call.respondOutputStream {

@@ -19,7 +19,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./scripts:/usr/local/nginx/scripts
-      - nginx_media:/nginx/media
+      - nginx_media:/media
     depends_on:
       - ktor
 
@@ -35,7 +35,7 @@ services:
     depends_on:
       - postgres  # Ensure PostgreSQL starts before the Ktor app
     volumes:
-      - nginx_media:/nginx/media
+      - nginx_media:/media
 
 volumes:
   postgres_data:
