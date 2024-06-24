@@ -28,6 +28,9 @@ services:
     image: tiangolo/nginx-rtmp:latest
     ports:
       - "1935:1935"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./scripts:/usr/local/nginx/scripts
     depends_on:
       - ktor
 
