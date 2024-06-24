@@ -13,6 +13,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.io.File
+import java.io.FileInputStream
 
 fun Route.WebinarRoute(webinarUseCase: WebinarUseCase) {
     authenticate("jwt") {
@@ -124,6 +126,23 @@ fun Route.WebinarRoute(webinarUseCase: WebinarUseCase) {
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.Conflict, BaseResponse(false, e.message ?: Constants.Error.GENERAL))
             }
+        }
+    }
+    get("/video/{fileName}") {
+        val fileName = call.parameters["fileName"]
+        if (fileName != null) {
+            val file = File("/nginx/media/$fileName")
+            if (file.exists() && file.isFile) {
+                val inputStream = FileInputStream(file)
+                call.respondOutputStream {
+                    inputStream.copyTo(this)
+                }
+                inputStream.close()
+            } else {
+                call.respondText("File not found", status = HttpStatusCode.NotFound)
+            }
+        } else {
+            call.respondText("Invalid request", status = HttpStatusCode.BadRequest)
         }
     }
 }

@@ -12,6 +12,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data  # Volume для сохранения данных
 
+  nginx:
+    image: tiangolo/nginx-rtmp:latest
+    ports:
+      - "1935:1935"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./scripts:/usr/local/nginx/scripts
+      - nginx_media:/nginx/media
+    depends_on:
+      - ktor
+
   ktor:
     image: my-ktor-app
     build:
@@ -23,16 +34,9 @@ services:
       - ./env.env
     depends_on:
       - postgres  # Ensure PostgreSQL starts before the Ktor app
-
-  nginx:
-    image: tiangolo/nginx-rtmp:latest
-    ports:
-      - "1935:1935"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./scripts:/usr/local/nginx/scripts
-    depends_on:
-      - ktor
+      - nginx_media:/nginx/media
 
 volumes:
   postgres_data:
+  nginx_media:
