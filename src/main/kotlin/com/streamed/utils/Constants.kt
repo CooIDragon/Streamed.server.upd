@@ -23,6 +23,7 @@ class Constants {
     }
 
     object Value {
+        const val CODE = "code"
         const val ID = "id"
         const val WEBINAR_ID = "webinarId"
         const val COMMENT_ID = "commentId"

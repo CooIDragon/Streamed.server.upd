@@ -32,6 +32,14 @@ class WebinarRepositoryImpl : WebinarRepository {
         }
     }
 
+    override suspend fun getWebinarByCode(code: String): List<WebinarModel> {
+        return dbQuery {
+            WebinarTable.select {
+                WebinarTable.inviteCode.eq(code)
+            }.mapNotNull { rowToWebinar(it) }
+        }
+    }
+
     override suspend fun getAllSubs(userId: Int): List<WebinarModel> {
         return dbQuery {
             val courseIds = UsersCourseTable

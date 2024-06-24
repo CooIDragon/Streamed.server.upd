@@ -31,4 +31,8 @@ class WebinarUseCase (
     suspend fun deleteWebinar(webinarId: Int) {
         webinarRepository.deleteWebinar(webinarId)
     }
+
+    suspend fun getByCode(code: String): List<WebinarModel> {
+        return webinarRepository.getWebinarByCode(code = code)
+    }
 }

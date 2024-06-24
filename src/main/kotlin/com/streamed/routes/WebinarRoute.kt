@@ -30,6 +30,20 @@ fun Route.WebinarRoute(webinarUseCase: WebinarUseCase) {
             }
         }
 
+        get("api/v1/get-webinar-by-code") {
+            val codeRequest = call.request.queryParameters[Constants.Value.CODE] ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest, BaseResponse(false, Constants.Error.MISSING_FIELDS))
+                return@get
+            }
+
+            try {
+                val webinar = webinarUseCase.getByCode(codeRequest)
+                call.respond(HttpStatusCode.OK, webinar)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.Conflict, BaseResponse(false, e.message ?: Constants.Error.GENERAL))
+            }
+        }
+
         get("api/v1/get-all-webinars-for-sub") {
             try {
                 val userId = call.principal<UserModel>()!!.id
