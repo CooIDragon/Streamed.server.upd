@@ -128,6 +128,28 @@ fun Route.WebinarRoute(webinarUseCase: WebinarUseCase) {
             }
         }
     }
+
+    get("/media") {
+        val mediaFolder = File("/media")
+
+        if (mediaFolder.exists() && mediaFolder.isDirectory) {
+            val prefix = call.parameters["prefix"] ?: ""
+
+            val files = mediaFolder.listFiles { file ->
+                file.isFile && file.name.startsWith(prefix)
+            }
+
+            if (files != null) {
+                val fileNames = files.map { it.name }
+                call.respond(fileNames)
+            } else {
+                call.respondText("No files found with the specified prefix", status = HttpStatusCode.NotFound)
+            }
+        } else {
+            call.respondText("Media folder not found", status = HttpStatusCode.NotFound)
+        }
+    }
+
     get("/video/{fileName}") {
         val fileName = call.parameters["fileName"]
         if (fileName != null) {
